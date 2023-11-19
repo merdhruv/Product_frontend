@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import AddProducts from "./AddProducts";
 
 export default function Product() {
   const navigate = useNavigate();
@@ -11,16 +12,16 @@ export default function Product() {
 
   const getProduct = async () => {
     try {
-      const response = await axios.get("http://localhost:1902/api/user");
+      const response = await axios.get("http://127.0.0.1:1902/api/user");
       setProductList(response.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleDelete = async (productId) => {
+  const handleDeleteProduct = async (productId) => {
     console.log(productId);
-    const deletedRecords = await axios.delete("http://localhost:1902/api/user");
+    const deletedRecords = await axios.delete("http://127.0.0.1:1902/api/user");
     getProduct();
     alert(`${deletedRecords.data} deleted successfully`);
   };
@@ -51,6 +52,14 @@ export default function Product() {
         </button>
       </div>
 
+      <AddProducts
+          updateProductList={() => {
+            getProducts();
+            setUpdateProduct({});
+          }}
+          product={updateProduct}
+        />
+
       <table className="table table-bordered table-strip">
         <thead>
           <tr>
@@ -59,16 +68,17 @@ export default function Product() {
             <th>Product Price</th>
             <th>Quantity</th>
             <th>Category</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {productList.map((productItem) => {
             return (
-              <tr key={productItem}>
+              <tr key={productItem.id}>
                 <td>{productItem.id}</td>
                 <td>{productItem.name}</td>
                 <td>{productItem.price}</td>
-                <td>{productItem.quantity}</td>
+                <td>{productItem.qty}</td>
                 <td>{productItem.category}</td>
                 <td>
                   <button
@@ -79,7 +89,7 @@ export default function Product() {
                   </button>
                   <button
                     className="btn btn-danger"
-                    onClick={handleUpdateProduct(productItem)}
+                    onClick={handleDeleteProduct(productItem.id)}
                   >
                     Delete
                   </button>
