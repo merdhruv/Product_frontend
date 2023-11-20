@@ -8,7 +8,9 @@ export default function Product() {
 
   const [productList, setProductList] = useState([]);
 
-  const [updateProduct, setUpdateProduct] = useState([]);
+  const [updateProduct, setUpdateProduct] = useState({});
+
+  const [isUpdate, setIsUpdate] = useState("");
 
   const getProduct = async () => {
     try {
@@ -21,7 +23,7 @@ export default function Product() {
 
   const handleDeleteProduct = async (productId) => {
     console.log(productId);
-    const deletedRecords = await axios.delete("http://127.0.0.1:1902/api/user");
+    const deletedRecords = await axios.delete("http://127.0.0.1:1902/api/user/:id");
     getProduct();
     alert(`${deletedRecords.data} deleted successfully`);
   };
@@ -29,7 +31,7 @@ export default function Product() {
   const handleUpdateProduct = (product) => {
     console.log(product);
     // pass product object to addProduct component
-    setUpdateProduct(product);
+    setIsUpdate(product.id);
   };
 
   useEffect(() => {
@@ -72,32 +74,72 @@ export default function Product() {
           </tr>
         </thead>
         <tbody>
-          {productList.map((productItem) => {
-            return (
-              <tr key={productItem.id}>
-                <td>{productItem.id}</td>
-                <td>{productItem.name}</td>
-                <td>{productItem.price}</td>
-                <td>{productItem.qty}</td>
-                <td>{productItem.category}</td>
-                <td>
-                  <button
-                    className="btn btn-warning"
-                    onClick={handleUpdateProduct(productItem)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={handleDeleteProduct(productItem.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
+            {productList.map((productItem) => {
+              return (
+                <tr key={productItem.id}>
+                  <td>
+                    <input
+                      type="text"
+                      className="input-disabled"
+                      id="productId"
+                      value={productItem.id}
+                      disabled={isUpdate === productItem.id ? false : true}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="input-disabled"
+                      id="productName"
+                      value={productItem.name}
+                      disabled={isUpdate === productItem.id ? false : true}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="input-disabled"
+                      id="productPrice"
+                      value={productItem.price}
+                      disabled={isUpdate === productItem.id ? false : true}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="input-disabled"
+                      id="productQuantity"
+                      value={productItem.qty}
+                      disabled={isUpdate === productItem.id ? false : true}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="input-disabled"
+                      type="text"
+                      id="categoryName"
+                      value={productItem.category}
+                      disabled={isUpdate === productItem.id ? false : true}
+                    />
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => handleUpdateProduct(productItem)}
+                    >
+                      {isUpdate === productItem.id ? "Save" : "Update"}
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteProduct(productItem.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
       </table>
     </div>
   );

@@ -2,11 +2,11 @@ import React, { useState,useEffect } from "react";
 import axios from 'axios';
 
 export default function AddProducts(props) {
-  const [productId, setProductId] = useState();
-  const [productName, setProductName] = useState();
-  const [categoryName, setCategoryName] = useState();
-  const [productPrice, setProductPrice] = useState();
-  const [productQty, setProductQty] = useState();
+  const [productId, setProductId] = useState("");
+  const [productName, setProductName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productQty, setProductQty] = useState("");
 
   const [isUpdateButton, setIsUpdateButton] = useState(false);
 
@@ -60,13 +60,16 @@ export default function AddProducts(props) {
     }
   };
   const resetForm = () => {
-    setProductId("");
-    setProductName("");
-    setCategoryName("");
-    setProductPrice("");
-    setProductQty("");
+    setProduct({
+      id: "",
+      name: "",
+      price: "",
+      qty: "",
+      category: "",
+    });
     setIsUpdateButton(false);
   };
+  
 
   const updateProduct = async () => {
     const updatedData = {
@@ -76,18 +79,20 @@ export default function AddProducts(props) {
       qty: productQty,
       category: categoryName,
     };
-    const udpatedRecord = await axios.put(
-      "http://127.0.0.1:1902/api/user",
-      updatedData
-    );
-    props.updateProductList();
-    resetForm();
-    alert("Product updated successfully!");
+    axios.put("http://127.0.0.1:1902/api/user", updatedData)
+    .then(() => {
+      props.updateProductList();
+      resetForm();
+      alert("Product updated successfully!");
+    })
+    .catch((error) => {
+      console.error("Error updating product:", error);
+    });
   };
 
   const saveProduct = async (product) => {
     const response = await axios.post(
-      "http://127.0.0.1:1920/api/user",
+      "http://127.0.0.1:1902/api/user",
       product
     );
     if (response.data) {
